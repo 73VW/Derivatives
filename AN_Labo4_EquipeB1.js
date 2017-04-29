@@ -90,6 +90,7 @@ function plot(data) {
 /*  Functions                                          */
 /*******************************************************/
 
+// Recursive function which return the factorial of his input
 function factorial(x){
   if (x == 0) {
     return 1;
@@ -98,6 +99,7 @@ function factorial(x){
   return x * (factorial(x-1));
 }
 
+// Taylor serie which approximate cos(x)
 function cos(x) {
   var result = 0;
   for (var i = 0; i < 100; i++) {
@@ -107,6 +109,7 @@ function cos(x) {
   return result;
 }
 
+// Approximate the derivative of cos(x)
 function fPrime(x) {
   return (8 * (cos(x + h/2) - cos(x - h/2)) - cos(x+h) + cos(x-h)) / 6*h;
 }
@@ -116,6 +119,7 @@ function fPrime(x) {
 /*  HTML/User interactions                             */
 /*******************************************************/
 
+// Solve the function and ask plotly to plot it
 function solve() {
   var data = [];
 
