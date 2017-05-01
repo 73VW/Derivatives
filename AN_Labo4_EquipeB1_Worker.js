@@ -1,5 +1,5 @@
 
-var h = 0.007; // TOOD: optimise h value!!
+var h = 0.07; // TOOD: optimise h value!!
 var n = 100; //n for the cos approximation with Taylor
 
 
