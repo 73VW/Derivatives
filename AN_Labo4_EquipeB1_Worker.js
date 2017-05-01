@@ -1,6 +1,5 @@
 
-var hPrime = 1;
-var hSecond = 0.001; // TOOD: optimise h value!!
+var h = 0.007; // TOOD: optimise h value!!
 var n = 100; //n for the cos approximation with Taylor
 
 
@@ -30,12 +29,12 @@ function cos(x) {
 
 // Approximate the derivative of cos(x) with the 4th degree polynomial
 function fPrime(x) {
-    return (8 * (cos(x + hPrime / 2) - cos(x - hPrime / 2)) - cos(x + hPrime) + cos(x - hPrime)) / 6 * hPrime;
+    return (8 * (cos(x + h / 2) - cos(x - h / 2)) - cos(x + h) + cos(x - h)) / (6 * h);
 }
 
 // Approximate the second derivative of cos(x) with the centered difference
 function fSecond(x) {
-    return (cos(x + hSecond) + cos(x - hSecond) - 2 * cos(x)) / Math.pow(hSecond, 2);
+    return (cos(x + h) + cos(x - h) - 2 * cos(x)) / Math.pow(h, 2);
 }
 
 // Create readable data for Plotly and style them a little.
