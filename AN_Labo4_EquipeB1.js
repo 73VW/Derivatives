@@ -15,7 +15,6 @@ function $name(name) {
     return document.getElementsByName(name);
 }
 
-
 var data = [];
 var interval = [-50, 50];
 
@@ -27,19 +26,17 @@ var workerSecond;
 /*  Web Worker                                         */
 /*******************************************************/
 
-
-function initWorkers(){
-    if(typeof(Worker) === "undefined") {
+function initWorkers() {
+    if (typeof(Worker) === "undefined") {
         console.log("Sorry, your browser does not support Web Workers...");
-    }
-    else {
+    } else {
         console.log("Browser supported");
 
-        if(typeof(workerFunction) == "undefined")
+        if (typeof(workerFunction) == "undefined")
             workerFunction = new Worker("AN_Labo4_EquipeB1_Worker.js");
-        if(typeof(workerPrime) == "undefined")
+        if (typeof(workerPrime) == "undefined")
             workerPrime = new Worker("AN_Labo4_EquipeB1_Worker.js");
-        if(typeof(workerSecond) == "undefined")
+        if (typeof(workerSecond) == "undefined")
             workerSecond = new Worker("AN_Labo4_EquipeB1_Worker.js");
 
         workerFunction.onmessage = function(event) {
@@ -58,8 +55,8 @@ function initWorkers(){
         };
 
         let errorFct = function(event) {
-                            console.log(event.message);
-                        };
+            console.log(event.message);
+        };
 
         workerFunction.onerror = workerPrime.onerror = workerSecond.onerror = errorFct;
     }
@@ -77,7 +74,6 @@ function plot(data) {
         font: {
             family: 'Gill Sans, Verdana, Arial',
             color: 'rgb(4, 147, 114)',
-            //   family: 'Arial, sans-serif',
             size: 14
         },
         xaxis: {
@@ -103,7 +99,6 @@ function plot(data) {
         });
 }
 
-
 /*******************************************************/
 /*  HTML/User interactions                             */
 /*******************************************************/
@@ -113,7 +108,7 @@ function solve() {
     initWorkers();
 
     //Cosinus
-    workerFunction.postMessage(['cos',interval]);
+    workerFunction.postMessage(['cos', interval]);
 
     //First derivative
     workerPrime.postMessage(['fPrime', interval]);

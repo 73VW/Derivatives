@@ -1,7 +1,5 @@
-
 var h = 0.007; // TOOD: optimise h value!!
 var n = 100; //n for the cos approximation with Taylor
-
 
 
 /*******************************************************/
@@ -46,9 +44,6 @@ function creatingData(listPoints, name) {
         mode: 'lines',
         type: 'scattergl',
         name: name,
-        // marker: {
-        //     color: 'rgb(41, 128, 185)'
-        // },
         line: {
             width: 2
         }
@@ -56,11 +51,10 @@ function creatingData(listPoints, name) {
     return data;
 }
 
-
 console.log("thread started");
 
 //thread work
-self.onmessage=function(e){
+self.onmessage = function(e) {
     console.log("begin work");
     // Generate the points between start and stop, according to f.
     // Inupt: function, xStart, xStop
@@ -69,26 +63,24 @@ self.onmessage=function(e){
     let fname;
     switch (e.data[0]) {
         case 'cos':
-            f=cos;
+            f = cos;
             fname = 'cos(x)';
             break;
-
         case 'fPrime':
-            f=fPrime;
+            f = fPrime;
             fname = 'cos\'(x)';
             break;
-
         case 'fSecond':
-            f=fSecond;
+            f = fSecond;
             fname = 'cos\'\'(x)';
             break;
         default:
-        break;
+            break;
     }
     let interval = e.data[1];
-    var xValues = [];
-    var yValues = [];
-    var index = 0;
+    let xValues = [];
+    let yValues = [];
+    let index = 0;
     for (let i = interval[0]; i <= interval[1]; i += 0.02) {
         xValues[index] = i;
         yValues[index] = f(i);
