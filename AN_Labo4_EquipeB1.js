@@ -15,47 +15,59 @@ function $name(name) {
     return document.getElementsByName(name);
 }
 
-var h = 1; // TOOD: optimise h value!!
-var n = 100; //n for the cos approximation with Taylor
+
+var data = [];
 var interval = [-50, 50];
+
+var workerFunction;
+var workerPrime;
+var workerSecond;
+
+/*******************************************************/
+/*  Web Worker                                         */
+/*******************************************************/
+
+
+function initWorkers(){
+    if(typeof(Worker) === "undefined") {
+        console.log("Sorry, your browser does not support Web Workers...");
+    }
+    else {
+        console.log("Browser supported");
+
+        if(typeof(workerFunction) == "undefined")
+            workerFunction = new Worker("AN_Labo4_EquipeB1_Worker.js");
+        if(typeof(workerPrime) == "undefined")
+            workerPrime = new Worker("AN_Labo4_EquipeB1_Worker.js");
+        if(typeof(workerSecond) == "undefined")
+            workerSecond = new Worker("AN_Labo4_EquipeB1_Worker.js");
+
+        workerFunction.onmessage = function(event) {
+            data[0] = event.data;
+            plot(data);
+        };
+
+        workerPrime.onmessage = function(event) {
+            data[1] = event.data;
+            plot(data);
+        };
+
+        workerSecond.onmessage = function(event) {
+            data[2] = event.data;
+            plot(data);
+        };
+
+        let errorFct = function(event) {
+                            console.log(event.message);
+                        };
+
+        workerFunction.onerror = workerPrime.onerror = workerSecond.onerror = errorFct;
+    }
+}
 
 /**************************************/
 /*  Plotly.js : Plot, show axis, ...  */
 /**************************************/
-
-// Generate the points between start and stop, according to f.
-// Intup: function, xStart, xStop
-// Output: two values array containing two arrays, respectively for x and y values
-function generatePointsToDraw(f, start, stop) {
-    var xValues = [];
-    var yValues = [];
-    var index = 0;
-    for (let i = start; i <= stop; i += 0.02) {
-        xValues[index] = i;
-        yValues[index] = f(i);
-        index++;
-    }
-    return [xValues, yValues];
-}
-
-// Create readable data for Plotly and style them a little.
-// Input: The list of x values and y values [x, y] and the name of the line
-function creatingData(listPoints, name) {
-    var data = {
-        x: listPoints[0],
-        y: listPoints[1],
-        mode: 'lines',
-        type: 'scattergl',
-        name: name,
-        // marker: {
-        //     color: 'rgb(41, 128, 185)'
-        // },
-        line: {
-            width: 2
-        }
-    };
-    return data;
-}
 
 // Plot the graph according to the given points
 // Input: list of points that plotly can read
@@ -91,43 +103,6 @@ function plot(data) {
         });
 }
 
-/*******************************************************/
-/*  Functions                                          */
-/*******************************************************/
-
-// Recursive function which return the factorial of his input
-function factorial(x) {
-    if (x == 0) {
-        return 1;
-    }
-
-    return x * (factorial(x - 1));
-}
-
-// Taylor serie which approximate cos(x)
-function cos(x) {
-    var result = 0;
-    for (let i = 0; i < n; i++) {
-        result += (Math.pow(-1, i) * Math.pow(x, 2 * i) / factorial(2 * i));
-    }
-
-    return result;
-}
-
-// Approximate the derivative of cos(x) with the 4th degree polynomial
-function fPrime(x) {
-    return (8 * (cos(x + h / 2) - cos(x - h / 2)) - cos(x + h) + cos(x - h)) / 6 * h;
-}
-
-// Approximate the second derivative of cos(x) with the centered difference
-function fSecond(x) {
-    return (cos(x + h) + cos(x - h) - 2 * cos(x)) / Math.pow(h, 2);
-}
-
-// Approximate the second derivative of cos(x) with the first derivative
-// function fSecond(x) {
-//     return (8 * (fPrime(x + h / 2) - fPrime(x - h / 2)) - fPrime(x + h) + fPrime(x - h)) / 6 * h;
-// }
 
 /*******************************************************/
 /*  HTML/User interactions                             */
@@ -135,19 +110,14 @@ function fSecond(x) {
 
 // Solve the function and ask plotly to plot it
 function solve() {
-    var data = [];
+    initWorkers();
 
     //Cosinus
-    let pointsCos = generatePointsToDraw(cos, interval[0], interval[1]);
-    data[0] = creatingData(pointsCos, "cos(x)");
+    workerFunction.postMessage(['cos',interval]);
 
     //First derivative
-    let pointsFirst = generatePointsToDraw(fPrime, interval[0], interval[1]);
-    data[1] = creatingData(pointsFirst, "cos'(x)");
+    workerPrime.postMessage(['fPrime', interval]);
 
     //Second derivative
-    let pointsSecond = generatePointsToDraw(fSecond, interval[0], interval[1]);
-    data[2] = creatingData(pointsSecond, "cos''(x)");
-
-    plot(data);
+    workerSecond.postMessage(['fSecond', interval]);
 }
