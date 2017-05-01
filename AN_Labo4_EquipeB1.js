@@ -83,7 +83,7 @@ function plot(data) {
             zerolinewidth: 2
         },
         yaxis: {
-            range: [-2, 2],
+            range: [-1.5, 1.5],
             title: 'f(x)',
             zeroline: true,
             zerolinewidth: 2
